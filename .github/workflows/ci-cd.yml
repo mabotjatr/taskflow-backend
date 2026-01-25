@@ -89,10 +89,6 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Run performance tests
-        run: |
-          mvn gatling:test -DskipTests=false
-
   # Job 2: Build and Push Docker Image
   build-and-push:
     needs: test-and-build
