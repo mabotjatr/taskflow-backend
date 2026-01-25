@@ -1,0 +1,12 @@
+# Replace the entire .dockerignore file
+cat > .dockerignore << 'EOF'
+# Keep these out of Docker build context
+target/
+*.log
+*.class
+.git/
+.idea/
+.vscode/
+*.iml
+.DS_Store
+EOF
