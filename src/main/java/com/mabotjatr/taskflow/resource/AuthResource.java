@@ -9,10 +9,18 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Tag(name = "Authentication", description = "User authentication and registration endpoints")
 public class AuthResource {
 
     @Inject
@@ -21,8 +29,22 @@ public class AuthResource {
     // User Registration Endpoint
     @POST
     @Path("/register")
-    @Transactional // This annotation is CRITICAL for database writes in Quarkus
-    public Response register(AuthRequest request) {
+    @Transactional
+    @Operation(summary = "Register a new user", description = "Creates a new user account and returns a JWT token")
+    @APIResponses({
+            @APIResponse(
+                    responseCode = "201",
+                    description = "User created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AuthResponse.class))),
+            @APIResponse(
+                    responseCode = "400",
+                    description = "Invalid input data"),
+            @APIResponse(
+                    responseCode = "409",
+                    description = "Username already exists")
+    })
+    public Response register(@RequestBody(description = "User registration data", required = true, content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthRequest.class))) AuthRequest request) {
         // 1. Basic Validation
         if (request.username == null || request.password == null || request.email == null) {
             throw new WebApplicationException("Username, email, and password are required", 400);
@@ -52,7 +74,10 @@ public class AuthResource {
     // User Login Endpoint
     @POST
     @Path("/login")
-    public Response login(AuthRequest request) {
+    @Operation(summary = "Authenticate user",description = "Login with username and password to receive JWT token")
+    @APIResponses({@APIResponse(responseCode = "200",description = "Login successful",content = @Content(mediaType = "application/json",schema = @Schema(implementation = AuthResponse.class))),
+            @APIResponse(responseCode = "401",description = "Invalid credentials")})
+    public Response login( @RequestBody( description = "User login credentials",required = true,content = @Content(mediaType = "application/json", schema = @Schema(implementation = AuthRequest.class)))AuthRequest request) {
         // 1. Basic Validation
         if (request.username == null || request.password == null) {
             throw new WebApplicationException("Username and password are required", 400);

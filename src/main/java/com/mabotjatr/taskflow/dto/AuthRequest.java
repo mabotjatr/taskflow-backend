@@ -1,9 +1,17 @@
 package com.mabotjatr.taskflow.dto;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
+@Schema(description = "Authentication request data")
 public class AuthRequest {
+
+    @Schema(description = "Username for registration/login", example = "john_doe", required = true)
     public String username;
-    public String email; // Used primarily for registration
+
+    @Schema(description = "Email address (for registration only)", example = "john@example.com")
+    public String email;
+
+    @Schema(description = "Password", example = "securePassword123", required = true, minLength = 6)
     public String password;
 
     // Constructors, getters, and setters

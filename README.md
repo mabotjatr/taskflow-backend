@@ -1,8 +1,30 @@
+# TaskFlow - Full-Stack Task Management API
+
+![Java](https://img.shields.io/badge/Java-21-red)
+![Quarkus](https://img.shields.io/badge/Quarkus-3.30-purple)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
+![Docker](https://img.shields.io/badge/Docker-✓-2496ED)
+![GitHub Actions](https://github.com/mabotjatr/taskflow-backend/workflows/TaskFlow%20CI/CD%20Pipeline/badge.svg)
+![Swagger](https://img.shields.io/badge/API-Documented-green)
+
+A production-ready task management API with JWT authentication, PostgreSQL, Docker, and complete CI/CD pipeline.
+
+## 🚀 Quick Start
+
+### Using Docker Compose (Recommended)
+```bash
+# Clone the repository
+git clone https://github.com/mabotjatr/taskflow-backend.git
+cd taskflow-backend
+
+# Start the application
+docker-compose up --build
+
+# API will be available at: http://localhost:8081
+
 # taskflow-backend
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
 ## Running the application in dev mode
 
@@ -11,7 +33,29 @@ You can run your application in dev mode that enables live coding using:
 ./mvnw compile quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+## API Documentation
+
+### Interactive API Explorer
+The API is fully documented with OpenAPI/Swagger. You can explore and test endpoints interactively:
+
+- **Swagger UI**: [http://localhost:8081/swagger-ui](http://localhost:8081/swagger-ui)
+### Available Endpoints
+
+#### Authentication
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|----------------|
+| `POST` | `/auth/register` | Register new user | None           |
+| `POST` | `/auth/login` | Login user | None           |
+
+#### Task Management
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|--------------|
+| `GET` | `/tasks` | Get all tasks for current user | JWT Required |
+| `GET` | `/tasks/{id}` | Get specific task by ID | JWT Required |
+| `POST` | `/tasks` | Create new task | JWT Required |
+| `PUT` | `/tasks/{id}` | Update existing task | JWT Required |
+| `DELETE` | `/tasks/{id}` | Delete task | JWT Required |
+
 
 ## Packaging and running the application
 
