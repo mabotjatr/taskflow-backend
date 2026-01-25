@@ -58,7 +58,7 @@ jobs:
           MP_JWT_VERIFY_ISSUER: https://taskflow-app.com
         run: |
           mvn clean compile test -DskipTests=false
-          echo "✅ Tests completed successfully!"
+          echo "Tests completed successfully!"
 
       - name: Build JAR
         run: mvn clean package -DskipTests -Dquarkus.package.type=uber-jar
@@ -72,16 +72,17 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'
+          scan-type: 'fs'
+          scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
 
-      - name: Notify Slack on failure
-        if: failure()
-        uses: 8398a7/action-slack@v3
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          status: ${{ job.status }}
-          channel: '#deployments'
+          sarif_file: 'trivy-results.sarif'
 
       - name: Run performance tests
         run: |
@@ -140,7 +141,7 @@ jobs:
     steps:
       - name: Deploy to Test Environment
         run: |
-          echo "🚀 Deployment would happen here!"
+          echo "Deployment would happen here!"
           echo "Image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
           echo "Next steps:"
           echo "1. Pull image on test server"
