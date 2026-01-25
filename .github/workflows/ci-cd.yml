@@ -69,6 +69,24 @@ jobs:
           name: taskflow-backend-jar
           path: target/*.jar
 
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Notify Slack on failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#deployments'
+
+      - name: Run performance tests
+        run: |
+          mvn gatling:test -DskipTests=false
+
   # Job 2: Build and Push Docker Image
   build-and-push:
     needs: test-and-build
