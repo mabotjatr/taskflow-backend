@@ -28,6 +28,5 @@ public class TaskRequest {
     @FutureOrPresent(message = "Due date must be in the present or future")
     public LocalDateTime dueDate;
 
-    @NotNull(message = "Status is required")
     public Task.Status status;
 }

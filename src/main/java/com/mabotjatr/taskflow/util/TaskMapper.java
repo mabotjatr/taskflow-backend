@@ -3,6 +3,7 @@ package com.mabotjatr.taskflow.util;
 import com.mabotjatr.taskflow.dto.TaskRequest;
 import com.mabotjatr.taskflow.dto.TaskResponse;
 import com.mabotjatr.taskflow.model.Task;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -30,11 +31,17 @@ public interface TaskMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "owner", ignore = true)
-    @Mapping(target = "status", ignore = true)
     @Mapping(target = "title", ignore = true)
     @Mapping(target = "description", ignore = true)
     @Mapping(target = "dueDate", ignore = true)
     void updateEntity(TaskRequest taskRequest, @MappingTarget Task task);
+
+    @AfterMapping
+    default void updateTaskStatus(TaskRequest taskRequest, @MappingTarget Task task) {
+        if (taskRequest.status != null) {
+            task.status = taskRequest.status;
+        }
+    }
 
     List<TaskResponse> toResponseList(List<Task> tasks);
 }
