@@ -3,7 +3,7 @@ package com.mabotjatr.taskflow.dto;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Schema(description = "Authentication response with JWT token")
-public class AuthResponse {
+public class AuthResponse { // possibly make use of  records
 
     @Schema(description = "JWT token for authentication", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
     public String token;

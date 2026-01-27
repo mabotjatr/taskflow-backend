@@ -4,12 +4,25 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.mabotjatr.taskflow.model.User;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
+
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
 @ApplicationScoped
 public class AuthService {
+
+    private final String BASE_URL = "https://taskflow-app.com";
+    private final Logger logger;
+
+    @Inject
+    public AuthService(Logger logger)
+    {
+        this.logger = logger;
+    }
+
 
     public String hashPassword(String plainPassword) {
         return BCrypt.withDefaults().hashToString(12, plainPassword.toCharArray());
@@ -21,10 +34,10 @@ public class AuthService {
 
     public String generateTokenForUser(User user) {
         try {
-            System.out.println("**************** DEBUG: Generating token for user: " + user.username);
-            System.out.println("**************** DEBUG: User roles: " + user.getRolesList());
+            logger.info("**************** DEBUG: Generating token for user: " + user.username);
+            logger.info("**************** DEBUG: User roles: " + user.getRolesList());
 
-            return Jwt.issuer("https://taskflow-app.com")
+            return Jwt.issuer(BASE_URL)
                     .subject(user.username)
                     .upn(user.username)
                     .groups(user.getRolesList() == null
@@ -35,7 +48,7 @@ public class AuthService {
                     .sign();
 
         } catch (Exception e) {
-            System.err.println("*********************DEBUG: JWT generation failed: " + e.getMessage());
+            logger.error("*********************DEBUG: JWT generation failed: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }

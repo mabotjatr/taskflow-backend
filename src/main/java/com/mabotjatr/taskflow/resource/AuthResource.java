@@ -16,6 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.logging.Logger;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -23,8 +24,17 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 @Tag(name = "Authentication", description = "User authentication and registration endpoints")
 public class AuthResource {
 
+
+    private final AuthService authService;
+    private final Logger logger;
+
     @Inject
-    AuthService authService;
+    public AuthResource(AuthService authService, Logger logger)
+    {
+        this.authService = authService;
+        this.logger = logger;
+    }
+
 
     // User Registration Endpoint
     @POST
@@ -64,7 +74,7 @@ public class AuthResource {
 
         String token = authService.generateTokenForUser(newUser);
 
-        System.out.println("************************ The user has been registered successfully, token : " + token);
+        logger.info("************************ The user has been registered successfully, token : " + token);
 
         return Response.ok(new AuthResponse(token, newUser.username))
                 .status(Response.Status.CREATED) // HTTP 201
@@ -94,7 +104,7 @@ public class AuthResource {
 
         String token = authService.generateTokenForUser(user);
 
-        System.out.println("************************ The user has been authenticated successfully, token : " + token);
+        logger.info("************************ The user has been authenticated successfully, token : " + token);
         return Response.ok(new AuthResponse(token, user.username)).build();
     }
 }
